@@ -2,21 +2,29 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import axios from 'axios';
-import {useDispatch} from "react-redux";
+import {useDispatch,useSelector} from "react-redux";
 import {add} from "../redux/Slice";
+import { fetchProducts } from '../redux/productslice';
+import {STATUSES} from "../redux/productslice";
 const Products = () => {
-    const [products,setProducts] = useState([]);
+    // const [products,setProducts] = useState([]);
     const dispatch = useDispatch();
-    const fetchProducts=async()=>{
-    await axios.get("https://fakestoreapi.com/products")
-    .then((res)=>setProducts(res?.data ? res?.data : []));
-    }
+    const {data:products,status} = useSelector((state)=>state.product);
+    // const fetchProducts=async()=>{
+    // await axios.get("https://fakestoreapi.com/products")
+    // .then((res)=>setProducts(res?.data ? res?.data : []));
+    // }
 const handleAdd = (data)=>{
 dispatch(add(data));
 }
 useEffect(()=>{
-fetchProducts();
+// fetchProducts();
+dispatch(fetchProducts());
 },[])
+if(status === STATUSES.LOADING)
+return <h1>LOADING...</h1>
+if(status === STATUSES.ERROR)
+return <h1>Something went wrong</h1>
 console.log(products)
   return (
     <div className='productsWrapper'>
